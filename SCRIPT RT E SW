@@ -1,0 +1,94 @@
+SCRIPT
+
+CONFIGURAÇÃO DO PC-01
+10° IP 192.168.0.10
+MASCARA 255.255.255.0
+GATEWAY 192.168.0.1
+
+CONFIGURAÇÃO DO PC-02
+10° IP 172.16.0.10
+MASCARA 255.255.0.0
+GATEWAY 172.16.0.1
+
+
+CONFIGURAÇÃO DO SW-01
+ENABLE
+CONFIGURE TERMINAL
+HOSTNAME SW-01
+ENABLE SECRET JASON*enable
+ip DOMAIN NAME 1rede.local
+crypto key generate rsa general-key modulus 1024
+line console 0
+password JASON*console
+exit
+line vty 0 15
+password JASON*vty
+transport input ssh
+login
+exit
+interface vlan 1
+ip address 192.168.0.254 255.255.255.0
+ip default-gateway 172.16.0.1
+no shutdown
+exit
+exit
+wr
+
+CONFIGURAÇÃO DO SW-02
+ENABLE
+CONFIGURE TERMINAL
+HOSTNAME SW-02
+ENABLE SECRET JASON*enable
+ip DOMAIN NAME 1rede.local
+crypto key generate rsa general-key modulus 1024
+line console 0
+password JASON*console
+exit
+line vty 0 15
+password JASON*vty
+transport input ssh
+login
+exit
+interface vlan 1
+ip address 172.16.255.254 255.255.0.0
+ip default-gateway 172.16.0.1
+no shutdown
+exit
+exit
+wr
+
+configuração do RT-01
+ENABLE
+CONFIGURE TERMINAL
+HOSTNAME RT-01
+ENABLE SECRET JASON*enable
+ip DOMAIN NAME 1rede.local
+crypto key generate rsa general-key modulus 1024
+line console 0
+password JASON*console
+exit
+line vty 0 15
+password JASON*vty
+transport input ssh
+login
+exit
+interface gigabitethernet 0/0
+ip address 192.168.0.1 255.255.255.0
+no shutdown
+description interface conectada ao pc-01
+ip default-gateway 192.168.0.1
+exit
+CONFIGURE TERMINAL
+interface gigabitethernet 0/1
+ip address 172.16.0.1 255.255.0.0
+no shutdown
+description interface conectada ao pc-02
+ip default-gateway 172.16.0.1
+exit
+show ip route
+wr
+
+
+
+
+
